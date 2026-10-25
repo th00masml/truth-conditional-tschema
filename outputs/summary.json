@@ -1,0 +1,103 @@
+{
+  "fixture_count": 160,
+  "arms": {
+    "mlx-community/Qwen2.5-0.5B-Instruct-4bit::naive": {
+      "classes": {
+        "invented_schema": 160
+      },
+      "membership_violations": 160,
+      "matcher_mismatches": 0,
+      "mean_mask_ms": 0.0
+    },
+    "mlx-community/Qwen2.5-0.5B-Instruct-4bit::prompted": {
+      "classes": {
+        "invented_schema": 160
+      },
+      "membership_violations": 160,
+      "matcher_mismatches": 0,
+      "mean_mask_ms": 0.0
+    },
+    "mlx-community/Qwen2.5-0.5B-Instruct-4bit::constrained": {
+      "classes": {
+        "invented_schema": 147,
+        "correct_abstain": 9,
+        "abstention": 4
+      },
+      "membership_violations": 147,
+      "matcher_mismatches": 0,
+      "mean_mask_ms": 2.042127758094791
+    },
+    "mlx-community/Qwen2.5-0.5B-Instruct-4bit::prompt_tuned": {
+      "classes": {
+        "invented_schema": 160
+      },
+      "membership_violations": 160,
+      "matcher_mismatches": 0,
+      "mean_mask_ms": 0.0
+    },
+    "mlx-community/Qwen2.5-0.5B-Instruct-4bit::constrained_tuned": {
+      "classes": {
+        "abstention": 71,
+        "correct_abstain": 66,
+        "invented_schema": 23
+      },
+      "membership_violations": 23,
+      "matcher_mismatches": 0,
+      "mean_mask_ms": 2.161765347826087
+    },
+    "mlx-community/Qwen2.5-1.5B-Instruct-4bit::naive": {
+      "classes": {
+        "invented_schema": 160
+      },
+      "membership_violations": 160,
+      "matcher_mismatches": 0,
+      "mean_mask_ms": 0.0
+    },
+    "mlx-community/Qwen2.5-1.5B-Instruct-4bit::prompted": {
+      "classes": {
+        "invented_schema": 160
+      },
+      "membership_violations": 160,
+      "matcher_mismatches": 0,
+      "mean_mask_ms": 0.0
+    },
+    "mlx-community/Qwen2.5-1.5B-Instruct-4bit::constrained": {
+      "classes": {
+        "invented_schema": 160
+      },
+      "membership_violations": 160,
+      "matcher_mismatches": 0,
+      "mean_mask_ms": 5.496857147265625
+    },
+    "mlx-community/Qwen2.5-1.5B-Instruct-4bit::prompt_tuned": {
+      "classes": {
+        "invented_schema": 160
+      },
+      "membership_violations": 160,
+      "matcher_mismatches": 0,
+      "mean_mask_ms": 0.0
+    },
+    "mlx-community/Qwen2.5-1.5B-Instruct-4bit::constrained_tuned": {
+      "classes": {
+        "invented_schema": 160
+      },
+      "membership_violations": 160,
+      "matcher_mismatches": 0,
+      "mean_mask_ms": 5.504776812890625
+    }
+  },
+  "paired_mcnemar": {
+    "mlx-community/Qwen2.5-0.5B-Instruct-4bit": {
+      "prompted_only_correct": 0,
+      "constrained_only_correct": 9,
+      "discordant": 9,
+      "two_sided_p": 0.00390625
+    },
+    "mlx-community/Qwen2.5-1.5B-Instruct-4bit": {
+      "prompted_only_correct": 0,
+      "constrained_only_correct": 0,
+      "discordant": 0,
+      "two_sided_p": 1.0
+    }
+  }
+}

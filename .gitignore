@@ -1,0 +1,14 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.vocab_cache/
+node_modules/
+.env
+.env.*
+*.pem
+*.key
+*.safetensors
+*.gguf
+*.pt
+.DS_Store
