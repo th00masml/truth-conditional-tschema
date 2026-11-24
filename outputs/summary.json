@@ -87,17 +87,21 @@
     }
   },
   "paired_mcnemar": {
-    "mlx-community/Qwen2.5-0.5B-Instruct-4bit": {
-      "prompted_only_correct": 0,
-      "constrained_only_correct": 9,
-      "discordant": 9,
-      "two_sided_p": 0.00390625
-    },
     "mlx-community/Qwen2.5-1.5B-Instruct-4bit": {
       "prompted_only_correct": 0,
       "constrained_only_correct": 0,
       "discordant": 0,
-      "two_sided_p": 1.0
+      "two_sided_p": 1.0,
+      "constrained_only_exact": 0,
+      "constrained_membership_violations": 160
+    },
+    "mlx-community/Qwen2.5-0.5B-Instruct-4bit": {
+      "prompted_only_correct": 0,
+      "constrained_only_correct": 9,
+      "discordant": 9,
+      "two_sided_p": 0.00390625,
+      "constrained_only_exact": 0,
+      "constrained_membership_violations": 147
     }
   }
 }

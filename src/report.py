@@ -21,6 +21,15 @@ def main() -> None:
         "",
         f"{summary['fixture_count']} deterministic fixtures; raw outputs are retained.",
         "",
+    ]
+    broken = sorted(k for k, v in summary["arms"].items() if "constrained" in k and v["membership_violations"])
+    if broken:
+        lines += [
+            f"> **Invalid run, do not cite.** {len(broken)} constrained arm(s) have membership violations, "
+            "so the decode mask did not hold. Rerun with the fixed mask (`src/run.py --overwrite`).",
+            "",
+        ]
+    lines += [
         "| model / arm | exact | valid_wrong_schema | invented_schema | abstention | correct_abstain | valid_spurious_schema | membership violations | matcher mismatches |",
         "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
@@ -57,6 +66,18 @@ def main() -> None:
             f"constrained-only correct {row['constrained_only_correct']}; "
             f"discordant {row['discordant']}; exact two-sided McNemar p={row['two_sided_p']:.5f}."
         )
+        if row.get("constrained_membership_violations", 0):
+            lines.append(
+                f"  - Not interpretable: the constrained arm has {row['constrained_membership_violations']} "
+                "membership violations, so the mask did not hold and the comparison is not prompted vs constrained."
+            )
+        elif row["constrained_only_correct"] and not row.get("constrained_only_exact", 0):
+            lines.append(
+                "  - All constrained-only wins are abstentions on out-of-inventory fixtures; "
+                "this is evidence of more abstaining, not of better T-sentences."
+            )
+        if row["discordant"] < 10:
+            lines.append(f"  - Only {row['discordant']} discordant pairs; treat p as descriptive.")
 
     lines += [
         "",

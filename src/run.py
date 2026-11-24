@@ -16,7 +16,12 @@ from mlx_binding import TSchemaSetLogitsProcessor, vocabulary_bytes
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "data" / "fixtures.jsonl"
 OUT = ROOT / "outputs" / "raw.jsonl"
-MODELS = "mlx-community/Qwen2.5-0.5B-Instruct-4bit,mlx-community/Qwen2.5-1.5B-Instruct-4bit"
+MODELS = ",".join([
+    "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+    "mlx-community/Qwen2.5-1.5B-Instruct-4bit",
+    "mlx-community/Qwen2.5-7B-Instruct-4bit",
+    "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+])
 TUNED = "Return only the canonical T-sentence for the target sentence, on one line, then stop. No extra words, no labels, no explanation. Example (not the target): for the sentence Milk is white. the answer is\n\"Milk is white\" is true iff Milk is white.\nIf the target is out of inventory, output nothing."
 INSTRUCTIONS = {
     "naive": "Answer the question from the language inventory card.",

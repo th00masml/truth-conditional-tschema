@@ -1,8 +1,8 @@
 # Results - Truth-Conditional T-Schema
 
-> **Invalid run, do not cite.** The decode mask was broken: `TSchemaSetLogitsProcessor` sliced `tokens[prompt_length:]`, but mlx_lm passes only generated tokens, so the prefix was always empty and every step got the root mask (outputs like `"C"""C"""`). The prompts also gave no filled-in example and no stop condition, which explains exact=0 in the unconstrained arms. Both are fixed (`src/mlx_binding.py`, `src/run.py`, regression test in `tests/test_mask.py`). Rerun on Apple silicon with `.venv/bin/python src/run.py --overwrite` and then the score/report steps.
-
 160 deterministic fixtures; raw outputs are retained.
+
+> **Invalid run, do not cite.** 4 constrained arm(s) have membership violations, so the decode mask did not hold. Rerun with the fixed mask (`src/run.py --overwrite`).
 
 | model / arm | exact | valid_wrong_schema | invented_schema | abstention | correct_abstain | valid_spurious_schema | membership violations | matcher mismatches |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -22,7 +22,11 @@
 Correctness means exact for in-inventory fixtures and correct_abstain for out-of-inventory fixtures. Each test compares prompted to constrained outcomes on matched fixtures.
 
 - mlx-community/Qwen2.5-0.5B-Instruct-4bit: prompted-only correct 0; constrained-only correct 9; discordant 9; exact two-sided McNemar p=0.00391.
+  - Not interpretable: the constrained arm has 147 membership violations, so the mask did not hold and the comparison is not prompted vs constrained.
+  - Only 9 discordant pairs; treat p as descriptive.
 - mlx-community/Qwen2.5-1.5B-Instruct-4bit: prompted-only correct 0; constrained-only correct 0; discordant 0; exact two-sided McNemar p=1.00000.
+  - Not interpretable: the constrained arm has 160 membership violations, so the mask did not hold and the comparison is not prompted vs constrained.
+  - Only 0 discordant pairs; treat p as descriptive.
 
 ## Davidson framing
 

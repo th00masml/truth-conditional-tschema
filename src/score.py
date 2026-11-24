@@ -87,7 +87,14 @@ def main() -> None:
         ids = sorted(set(prompted) & set(constrained))
         prompted_ok = [prompted[i]["class"] in {"exact", "correct_abstain"} for i in ids]
         constrained_ok = [constrained[i]["class"] in {"exact", "correct_abstain"} for i in ids]
-        report["paired_mcnemar"][model] = mcnemar(prompted_ok, constrained_ok)
+        result = mcnemar(prompted_ok, constrained_ok)
+        # Split constrained-only wins by fixture type: wins that are all abstentions
+        # on out-of-inventory items say nothing about T-sentence correctness.
+        result["constrained_only_exact"] = sum(
+            b and not a and prompted[i]["present"] for i, a, b in zip(ids, prompted_ok, constrained_ok)
+        )
+        result["constrained_membership_violations"] = sum(r["membership_violation"] for r in constrained.values())
+        report["paired_mcnemar"][model] = result
 
     SUMMARY.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2))
