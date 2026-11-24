@@ -17,12 +17,13 @@ ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "data" / "fixtures.jsonl"
 OUT = ROOT / "outputs" / "raw.jsonl"
 MODELS = "mlx-community/Qwen2.5-0.5B-Instruct-4bit,mlx-community/Qwen2.5-1.5B-Instruct-4bit"
+TUNED = "Return only the canonical T-sentence for the target sentence, on one line, then stop. No extra words, no labels, no explanation. Example (not the target): for the sentence Milk is white. the answer is\n\"Milk is white\" is true iff Milk is white.\nIf the target is out of inventory, output nothing."
 INSTRUCTIONS = {
     "naive": "Answer the question from the language inventory card.",
-    "prompted": "Output exactly one canonical T-sentence in the form \"P\" is true iff P. Output empty if out of inventory.",
-    "constrained": "Answer the question from the language inventory card.",
-    "prompt_tuned": "Return only the canonical T-sentence for the target sentence. No extra words, no labels, no explanation. Output empty if out of inventory.",
-    "constrained_tuned": "Return only the canonical T-sentence for the target sentence. No extra words, no labels, no explanation. Output empty if out of inventory.",
+    "prompted": "Output exactly one canonical T-sentence of the form: \"<sentence without final period>\" is true iff <sentence>. Example (not the target): for the sentence Milk is white. the answer is\n\"Milk is white\" is true iff Milk is white.\nIf the target is out of inventory, output nothing.",
+    "constrained": "Answer the question from the language inventory card.",  # same as naive: isolates the mask
+    "prompt_tuned": TUNED,
+    "constrained_tuned": TUNED,
 }
 
 
@@ -50,12 +51,15 @@ def run_one(model, tokenizer, item, arm, token_bytes, allowed_schemas):
         )
         kwargs["logits_processors"] = [processor]
 
+    newline_ids = {t for t, b in token_bytes.items() if b"\n" in b}
     started = time.perf_counter()
     tokens = []
     for token, _ in generate_step(mx.array(prompt), model, **kwargs):
         if token in tokenizer.eos_token_ids:
             break
         tokens.append(token)
+        if processor is None and token in newline_ids:
+            break
     elapsed = time.perf_counter() - started
 
     detail = {
@@ -69,6 +73,9 @@ def run_one(model, tokenizer, item, arm, token_bytes, allowed_schemas):
             if processor.constraint.allowed(prefix) != processor.constraint.naive_allowed(prefix):
                 detail["matcher_mismatches"] += 1
             prefix += token_bytes.get(token, b"")
+        output_bytes = b"".join(token_bytes.get(t, b"") for t in tokens)
+        if not processor.constraint.accepts(output_bytes):
+            raise RuntimeError(f"constrained output escaped the schema set: {output_bytes!r}")
         detail.update(
             {
                 "mask_seconds": processor.elapsed_ns / 1e9,

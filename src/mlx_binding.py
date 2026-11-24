@@ -15,11 +15,21 @@ class TSchemaSetLogitsProcessor:
         self.eos_token_ids = set(eos_token_ids)
         self.elapsed_ns = 0
         self.trace: list[dict[str, int]] = []
+        self.calls = 0
 
     def __call__(self, tokens: mx.array, logits: mx.array) -> mx.array:
         started = perf_counter_ns()
-        prefix = b"".join(self.constraint.token_bytes.get(token, b"") for token in tokens.tolist()[self.prompt_length:])
-        allowed = self.constraint.allowed(prefix) | self.eos_token_ids
+        # Call k happens after k generated tokens. Depending on the mlx_lm version,
+        # `tokens` holds either prompt+generated or only generated tokens, so take
+        # the last k entries instead of slicing at prompt_length.
+        generated = tokens.tolist()[-self.calls:] if self.calls and tokens is not None else []
+        self.calls += 1
+        prefix = b"".join(self.constraint.token_bytes.get(token, b"") for token in generated)
+        allowed = self.constraint.allowed(prefix)
+        if self.constraint.accepts(prefix):
+            allowed |= self.eos_token_ids
+        if not allowed:
+            raise RuntimeError(f"constraint dead end at prefix {prefix!r}")
         self.trace.append({"allowed": len(allowed), "vocab": logits.shape[-1]})
         masked = mx.full(logits.shape, -float("inf"), dtype=logits.dtype)
         masked[0, mx.array(sorted(allowed), dtype=mx.uint32)] = 0

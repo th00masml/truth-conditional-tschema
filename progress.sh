@@ -12,6 +12,7 @@ fi
 
 "$PY" src/fixtures.py
 "$PY" src/constraint.py
+"$PY" tests/test_mask.py
 "$PY" src/run.py
 "$PY" src/score.py
 "$PY" src/report.py
